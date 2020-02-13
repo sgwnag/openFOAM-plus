@@ -157,7 +157,8 @@ Foam::PatchFunction1Types::MappedFile<Type>::MappedFile
     endSampleTime_(ut.endSampleTime_),
     endSampledValues_(ut.endSampledValues_),
     endAverage_(ut.endAverage_),
-    offset_(ut.offset_.clone())
+    offset_(ut.offset_.clone()),
+    readFormat_(ut.readFormat_)
 {}
 
 
@@ -183,7 +184,8 @@ Foam::PatchFunction1Types::MappedFile<Type>::MappedFile
     endSampleTime_(ut.endSampleTime_),
     endSampledValues_(ut.endSampledValues_),
     endAverage_(ut.endAverage_),
-    offset_(ut.offset_.clone())
+    offset_(ut.offset_.clone()),
+    readFormat_(ut.readFormat_)
 {}
 
 
@@ -404,6 +406,7 @@ void Foam::PatchFunction1Types::MappedFile<Type>::checkTable
             if (setAverage_)
             {
                 startAverage_ = vals.average();
+
             }
 
             if (vals.size() != mapperPtr_().sourceSize())

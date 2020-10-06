@@ -40,7 +40,7 @@ vibrationShellFvPatchScalarField::vibrationShellFvPatchScalarField
 )
 :
     mixedFvPatchField<scalar>(p, iF),
-    baffle_(),
+    baffle_(nullptr),
     dict_(dictionary::null)
 {
     refValue() = 0;
@@ -64,7 +64,7 @@ vibrationShellFvPatchScalarField::vibrationShellFvPatchScalarField
         iF,
         mapper
     ),
-    baffle_(),
+    baffle_(nullptr),
     dict_(ptf.dict_)
 {}
 
@@ -77,7 +77,7 @@ vibrationShellFvPatchScalarField::vibrationShellFvPatchScalarField
 )
 :
     mixedFvPatchField<scalar>(p, iF),
-    baffle_(),
+    baffle_(nullptr),
     dict_(dict)
 {
     fvPatchScalarField::operator=(scalarField("value", dict, p.size()));
@@ -97,7 +97,7 @@ vibrationShellFvPatchScalarField::vibrationShellFvPatchScalarField
         valueFraction() = 1;
     }
 
-    if (baffle_.empty())
+    if (!baffle_)
     {
         baffle_.reset(regionModels::vibrationShellModel::New(p, dict).ptr());
     }

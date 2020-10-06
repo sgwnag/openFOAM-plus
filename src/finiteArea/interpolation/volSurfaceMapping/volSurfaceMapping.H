@@ -6,7 +6,7 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
     Copyright (C) 2016-2017 Wikki Ltd
-    Copyright (C) 2019 OpenCFD Ltd.
+    Copyright (C) 2019-2020 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -130,6 +130,16 @@ public:
         void mapToField
         (
             const GeometricField<Type, faPatchField, areaMesh>& af,
+            Field<Type>& f
+        ) const;
+
+
+        //- Map surface field to volume field assumes Field faces in the same order
+        //  as Boundary
+        template<class Type>
+        void mapToField
+        (
+            const Field<Type>& af,
             Field<Type>& f
         ) const;
 

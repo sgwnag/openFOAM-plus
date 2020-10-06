@@ -42,7 +42,7 @@ thermalShellFvPatchScalarField::thermalShellFvPatchScalarField
 )
 :
     fixedValueFvPatchField<scalar>(p, iF),
-    baffle_(),
+    baffle_(nullptr),
     dict_(dictionary::null)
 {}
 
@@ -62,7 +62,7 @@ thermalShellFvPatchScalarField::thermalShellFvPatchScalarField
         iF,
         mapper
     ),
-    baffle_(),
+    baffle_(nullptr),
     dict_(ptf.dict_)
 {}
 
@@ -75,14 +75,14 @@ thermalShellFvPatchScalarField::thermalShellFvPatchScalarField
 )
 :
     fixedValueFvPatchField<scalar>(p, iF, dict),
-    baffle_(),
+    baffle_(nullptr),
     dict_(dict)
 {
 
     typedef regionModels::thermalShellModel baffle;
 
     {
-        if (baffle_.empty())
+        if (!baffle_)
         {
             baffle_.reset(baffle::New(p, dict).ptr());
         }

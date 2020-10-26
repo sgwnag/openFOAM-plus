@@ -211,8 +211,4 @@ Foam::scalar Foam::regionModels::regionFaModel::CourantNumber() const
 }
 
 
-void Foam::regionModels::regionFaModel::info()
-{}
-
-
 // ************************************************************************* //

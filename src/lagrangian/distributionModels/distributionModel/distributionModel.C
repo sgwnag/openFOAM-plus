@@ -6,6 +6,7 @@
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
     Copyright (C) 2011-2017 OpenFOAM Foundation
+    Copyright (C) 2021 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -43,16 +44,18 @@ void Foam::distributionModel::check() const
     if (minValue() < 0)
     {
         FatalErrorInFunction
-            << type() << "distribution: Minimum value must be greater than "
-            << "zero." << nl << "Supplied minValue = " << minValue()
+            << type() << "distribution:"
+            << "Minimum value must be greater than zero." << nl
+            << "Supplied minValue = " << minValue()
             << abort(FatalError);
     }
 
-    if (maxValue() < minValue())
+    if (maxValue() <= minValue())
     {
         FatalErrorInFunction
-            << type() << "distribution: Maximum value is smaller than the "
-            << "minimum value:" << nl << "    maxValue = " << maxValue()
+            << type() << "distribution:"
+            << "Maximum value cannot be smaller than or equal to minimum value"
+            << nl << "    maxValue = " << maxValue()
             << ", minValue = " << minValue()
             << abort(FatalError);
     }
@@ -69,7 +72,9 @@ Foam::distributionModel::distributionModel
 )
 :
     distributionModelDict_(dict),
-    rndGen_(rndGen)
+    rndGen_(rndGen),
+    minValue_(distributionModelDict_.getOrDefault<scalar>("minValue", GREAT)),
+    maxValue_(distributionModelDict_.getOrDefault<scalar>("maxValue", -GREAT))
 {}
 
 
@@ -79,14 +84,24 @@ Foam::distributionModel::distributionModel
 )
 :
     distributionModelDict_(p.distributionModelDict_),
-    rndGen_(p.rndGen_)
+    rndGen_(p.rndGen_),
+    minValue_(p.minValue_),
+    maxValue_(p.maxValue_)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::distributionModel::~distributionModel()
-{}
+Foam::scalar Foam::distributionModel::minValue() const
+{
+    return minValue_;
+}
+
+
+Foam::scalar Foam::distributionModel::maxValue() const
+{
+    return maxValue_;
+}
 
 
 // ************************************************************************* //

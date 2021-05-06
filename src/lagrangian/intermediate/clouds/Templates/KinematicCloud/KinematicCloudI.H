@@ -421,7 +421,8 @@ Foam::KinematicCloud<CloudType>::UCoeff() const
 
 template<class CloudType>
 inline Foam::tmp<Foam::fvVectorMatrix>
-Foam::KinematicCloud<CloudType>::SU(volVectorField& U) const
+Foam::KinematicCloud<CloudType>::SU(volVectorField& U, bool incompressible)
+const
 {
     if (debug)
     {
@@ -431,18 +432,29 @@ Foam::KinematicCloud<CloudType>::SU(volVectorField& U) const
             << max(UCoeff()).value() << endl;
     }
 
+    dimensionSet dim(dimForce);
+    if (incompressible)
+    {
+        dim.reset(dimForce/dimDensity);
+    }
+
     if (solution_.coupled())
     {
         if (solution_.semiImplicit("U"))
         {
-            const volScalarField::Internal
+            volScalarField::Internal
                 Vdt(mesh_.V()*this->db().time().deltaT());
+
+            if (incompressible)
+            {
+                Vdt.dimensions() *= dimDensity;
+            }
 
             return UTrans()/Vdt - fvm::Sp(UCoeff()/Vdt, U) + UCoeff()/Vdt*U;
         }
         else
         {
-            tmp<fvVectorMatrix> tfvm(new fvVectorMatrix(U, dimForce));
+            tmp<fvVectorMatrix> tfvm(new fvVectorMatrix(U, dim));
             fvVectorMatrix& fvm = tfvm.ref();
 
             fvm.source() = -UTrans()/(this->db().time().deltaT());
@@ -451,7 +463,7 @@ Foam::KinematicCloud<CloudType>::SU(volVectorField& U) const
         }
     }
 
-    return tmp<fvVectorMatrix>::New(U, dimForce);
+    return tmp<fvVectorMatrix>::New(U, dim);
 }
 
 

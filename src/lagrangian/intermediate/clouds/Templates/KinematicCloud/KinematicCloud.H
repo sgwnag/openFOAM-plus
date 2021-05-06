@@ -488,8 +488,12 @@ public:
                     inline const volScalarField::Internal&
                         UCoeff() const;
 
-                    //- Return tmp momentum source term
-                    inline tmp<fvVectorMatrix> SU(volVectorField& U) const;
+                    //- Return tmp momentum source term (compressible)
+                    inline tmp<fvVectorMatrix> SU
+                    (
+                        volVectorField& U,
+                        bool incompressible = false
+                    ) const;
 
 
         // Check

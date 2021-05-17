@@ -82,7 +82,9 @@ bool Foam::primitiveEntry::expandVariable
     word expanded;
     string altValue;
 
-    if (varName.size() > 1 && varName[0] == token::BEGIN_BLOCK)
+    // Any ${{ expr }} entries have been trapped and processed elsewhere
+
+    if (varName[0] == token::BEGIN_BLOCK && varName.size() > 1)
     {
         // Replace content between {} with string expansion and
         // handle ${parameter:-word} or ${parameter:+word}

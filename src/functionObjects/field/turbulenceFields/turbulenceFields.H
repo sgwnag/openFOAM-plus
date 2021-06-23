@@ -62,22 +62,26 @@ Usage
         libs        (fieldFunctionObjects);
 
         // Mandatory entries (runtime modifiable)
-        // Either field or fields entries
-        fields      (R devRhoReff);
-        field       R;
 
-        // Optional (inherited) entries
+            // Either of the below
+            // Option-1
+            fields      (R devRhoReff);
+
+            // Option-2
+            field       R;
+
+        // Inherited entries
         ...
     }
     \endverbatim
 
     where the entries mean:
     \table
-      Property     | Description                           | Type | Req'd | Dflt
-      type         | Type name: turbulenceFields           | word |  yes  | -
-      libs         | Library name: fieldFunctionObjects    | word |  yes  | -
+      Property     | Description                           | Type | Reqd | Deflt
+      type         | Type name: turbulenceFields           | word | yes  | -
+      libs         | Library name: fieldFunctionObjects    | word | yes  | -
       fields       | Names of fields to store (see below)  | wordList | yes | -
-      field        | Name of a field to store (see below)  | word | yes | -
+      field        | Name of a field to store (see below)  | word | yes  | -
     \endtable
 
     where \c fields can include:
@@ -153,8 +157,8 @@ public:
             cfEpsilon,      //!< "Turbulent kinetic energy dissipation rate"
             cfOmega,        //!< "Specific dissipation rate"
             cfNuTilda,      //!< "Modified turbulent viscosity"
-            cfMut,          //!< "Turbulent viscosity"
-            cfMuEff,        //!< "Effective turbulent viscosity"
+            cfMut,          //!< "Turbulent dynamic viscosity"
+            cfMuEff,        //!< "Effective turbulent dynamic viscosity"
             cfAlphat,       //!< "Turbulence thermal diffusivity"
             cfAlphaEff,     //!< "Effective turbulence thermal diffusivity"
             cfR,            //!< "Reynolds stress tensor"
@@ -184,7 +188,7 @@ public:
         //- Names for incompressibleField turbulence fields
         static const Enum<incompressibleField> incompressibleFieldNames_;
 
-        //- Turbulence closure model name
+        //- Name of the turbulence properties dictionary
         static const word modelName_;
 
 

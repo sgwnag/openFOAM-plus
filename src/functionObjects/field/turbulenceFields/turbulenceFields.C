@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2013-2016 OpenFOAM Foundation
+    Copyright (C) 2013-2020 OpenFOAM Foundation
     Copyright (C) 2015-2021 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
@@ -94,7 +94,10 @@ void Foam::functionObjects::turbulenceFields::initialise()
 {
     for (const word& f : fieldSet_)
     {
-        const word scopedName(prefix_ + f);
+        const word scopedName
+        (
+            IOobject::groupName(prefix_ + f, phaseName_)
+        );
 
         if (obr_.found(scopedName))
         {
@@ -111,13 +114,16 @@ void Foam::functionObjects::turbulenceFields::initialise()
 }
 
 
-bool Foam::functionObjects::turbulenceFields::compressible()
+bool Foam::functionObjects::turbulenceFields::compressible
+(
+    const word& modelName
+) const
 {
-    if (obr_.foundObject<compressible::turbulenceModel>(modelName_))
+    if (obr_.foundObject<compressible::turbulenceModel>(modelName))
     {
         return true;
     }
-    else if (obr_.foundObject<incompressible::turbulenceModel>(modelName_))
+    else if (obr_.foundObject<incompressible::turbulenceModel>(modelName))
     {
         return false;
     }
@@ -142,6 +148,7 @@ Foam::functionObjects::turbulenceFields::turbulenceFields
     fvMeshFunctionObject(name, runTime, dict),
     initialised_(false),
     prefix_(dict.getOrDefault<word>("prefix", "turbulenceProperties:")),
+    phaseName_(dict.getOrDefault<word>("phase", word::null)),
     fieldSet_()
 {
     read(dict);
@@ -155,6 +162,7 @@ bool Foam::functionObjects::turbulenceFields::read(const dictionary& dict)
     if (fvMeshFunctionObject::read(dict))
     {
         dict.readIfPresent("prefix", prefix_);
+        dict.readIfPresent("phase", phaseName_);
 
         if (dict.found("field"))
         {
@@ -171,7 +179,9 @@ bool Foam::functionObjects::turbulenceFields::read(const dictionary& dict)
             Info<< "storing fields:" << nl;
             for (const word& f : fieldSet_)
             {
-                Info<< "    " << prefix_ << f << nl;
+                Info<< "    "
+                    << IOobject::groupName(prefix_ + f, phaseName_)
+                    << nl;
             }
             Info<< endl;
         }
@@ -196,12 +206,17 @@ bool Foam::functionObjects::turbulenceFields::execute()
         initialise();
     }
 
-    const bool comp = compressible();
+    const word modelName
+    (
+        IOobject::groupName(modelName_, phaseName_)
+    );
+
+    const bool comp = compressible(modelName);
 
     if (comp)
     {
         const auto& model =
-            obr_.lookupObject<compressible::turbulenceModel>(modelName_);
+            obr_.lookupObject<compressible::turbulenceModel>(modelName);
 
         for (const word& f : fieldSet_)
         {
@@ -278,7 +293,7 @@ bool Foam::functionObjects::turbulenceFields::execute()
     else
     {
         const auto& model =
-            obr_.lookupObject<incompressible::turbulenceModel>(modelName_);
+            obr_.lookupObject<incompressible::turbulenceModel>(modelName);
 
         for (const word& f : fieldSet_)
         {
@@ -351,7 +366,10 @@ bool Foam::functionObjects::turbulenceFields::write()
 {
     for (const word& f : fieldSet_)
     {
-        const word scopedName(prefix_ + f);
+        const word scopedName
+        (
+            IOobject::groupName(prefix_ + f, phaseName_)
+        );
 
         writeObject(scopedName);
     }

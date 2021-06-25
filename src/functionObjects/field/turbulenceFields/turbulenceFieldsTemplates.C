@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2012-2016 OpenFOAM Foundation
+    Copyright (C) 2012-2020 OpenFOAM Foundation
     Copyright (C) 2018-2021 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
@@ -39,7 +39,10 @@ void Foam::functionObjects::turbulenceFields::processField
 {
     typedef GeometricField<Type, fvPatchField, volMesh> FieldType;
 
-    const word scopedName(prefix_ + fieldName);
+    const word scopedName
+    (
+        IOobject::groupName(prefix_ + fieldName, phaseName_)
+    );
 
     FieldType* fldPtr = obr_.getObjectPtr<FieldType>(scopedName);
 

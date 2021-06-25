@@ -5,7 +5,7 @@
     \\  /    A nd           | www.openfoam.com
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
-    Copyright (C) 2013-2016 OpenFOAM Foundation
+    Copyright (C) 2013-2020 OpenFOAM Foundation
     Copyright (C) 2015-2021 OpenCFD Ltd.
 -------------------------------------------------------------------------------
 License
@@ -65,6 +65,7 @@ Usage
 
         // Optional entries (runtime modifiable)
         prefix          <word>;
+        phase           <word>;
 
         // Inherited entries
         ...
@@ -79,6 +80,7 @@ Usage
       fields       | Names of fields to store (see below)  | wordList | yes | -
       field        | Name of a field to store (see below)  | word | yes  | -
       prefix  | Name of output-field prefix | word | no | turbulenceProperties:
+      phase        | Name of operand phase                 | word | no   | -
     \endtable
 
     where \c fields can include:
@@ -199,6 +201,9 @@ protected:
         //- Name of output-field prefix
         word prefix_;
 
+        //- Name of operand phase
+        word phaseName_;
+
         //- Fields to load
         wordHashSet fieldSet_;
 
@@ -209,7 +214,7 @@ protected:
         void initialise();
 
         //- Return true if compressible turbulence model is identified
-        bool compressible();
+        bool compressible(const word& modelName) const;
 
         //- Process the turbulence field
         template<class Type>
